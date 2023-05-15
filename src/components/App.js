@@ -3,6 +3,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import API from './Api/Api';
 import Searchbar from './Searchbar/Searchbar';
+import Modal from './Modal/Modal';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 
 import css from './App.module.css';
 
@@ -145,3 +148,5 @@ class App extends Component {
     }
   }
 }
+
+export default App;
