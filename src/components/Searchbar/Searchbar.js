@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import css from './Searchbar.module.css';
 import { IconContext } from 'react-icons';
-import { FiSearch } from 'react-icons/fi';
+import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 class Searchbar extends Component {
@@ -11,17 +11,21 @@ class Searchbar extends Component {
   };
 
   handleInputChange = e => {
-    this.setState({ value: e.target.value });
+    this.setState({ query: e.target.value });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    if (this.state.value.trim() === '') {
+    if (this.state.query.trim() === '') {
       toast.warning('Enter your search query');
       return;
     }
-    this.props.onSubmit(this.state.value.trim().toLowerCase());
+    this.props.onSubmit(this.state.query.trim().toLowerCase());
     this.reset();
+  };
+
+  reset = () => {
+    this.setState({ query: '' });
   };
 
   render() {
@@ -31,7 +35,7 @@ class Searchbar extends Component {
           <button type="submit" className={css.searchForm_button}>
             <IconContext.Provider value={{ size: '1.5em' }}>
               <div>
-                <FiSearch />
+                <FaSearch />
               </div>
             </IconContext.Provider>
             <span className={css.searchForm_button_label}>Search</span>

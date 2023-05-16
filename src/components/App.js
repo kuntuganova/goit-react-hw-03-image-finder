@@ -6,10 +6,10 @@ import Searchbar from './Searchbar/Searchbar';
 import Modal from './Modal/Modal';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
-
+import Loader from './Loader/Loader';
 import css from './App.module.css';
 
-class App extends Component {
+export class App extends Component {
   state = {
     status: 'idle',
     query: [],
@@ -38,7 +38,7 @@ class App extends Component {
       this.setState({ query: [], status: 'pending' });
     }
     if (prevQuery !== nextQuery || prevPage !== nextPage) {
-      API.fetchQuery(nextQuery, nextPage)
+      API(nextQuery, nextPage)
         .then(({ hits }) => {
           const images = hits.map(
             ({ id, webformatURL, largeImageURL, tags }) => {
@@ -117,7 +117,7 @@ class App extends Component {
         <div>
           <Searchbar onSubmit={this.handleSubmitInput} />
           {query.length > 0 && <ImageGallery query={query} />}
-          <Spinner className={css.Loader} />
+          <Loader className={css.LoaderContainer} />
         </div>
       );
     }
@@ -148,5 +148,3 @@ class App extends Component {
     }
   }
 }
-
-export default App;

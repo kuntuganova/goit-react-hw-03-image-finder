@@ -21,7 +21,7 @@ function ImageGallery({ query, onClickImg }) {
 }
 
 ImageGallery.propTypes = {
-  gallery: PropTypes.arrayOf(
+  query: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       webformatURL: PropTypes.string.isRequired,
@@ -29,7 +29,7 @@ ImageGallery.propTypes = {
       tags: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
-  onClickImg: PropTypes.func.isRequired,
+  onClickImg: PropTypes.func,
 };
 
 export default ImageGallery;
