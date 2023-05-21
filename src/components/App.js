@@ -127,7 +127,6 @@ export class App extends Component {
     }
 
     if (status === 'resolved') {
-      // console.log('resolved', this.state.query);
       return (
         <>
           {showModal && (
