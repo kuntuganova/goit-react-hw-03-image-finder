@@ -78,9 +78,10 @@ export class App extends Component {
   };
 
   handleClickBtn = () => {
-    this.setState(({ page }) => {
-      return { page: page + 1, status: 'pending' };
-    });
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+      status: 'pending',
+    }));
   };
 
   toggleModal = () => {
