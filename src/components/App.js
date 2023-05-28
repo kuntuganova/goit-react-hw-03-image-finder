@@ -19,6 +19,7 @@ export class App extends Component {
     showModal: false,
     modalImg: '',
     error: null,
+    hideButton: false,
   };
 
   componentDidUpdate(_, prevState) {
@@ -54,7 +55,7 @@ export class App extends Component {
             });
           } else {
             toast.error(`Didn't find anything for the query: ${nextQuery}`);
-            this.setState({ status: 'idle' });
+            this.setState({ status: 'idle', hideButton: true });
           }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
@@ -91,7 +92,9 @@ export class App extends Component {
   };
 
   render() {
-    const { query, showModal, modalImg, modalAlt, error, status } = this.state;
+    const { query, showModal, modalImg, modalAlt, error, status, hideButton } =
+      this.state;
+    const hasMoreImages = query.length > 0;
 
     if (status === 'idle') {
       return (
@@ -117,7 +120,7 @@ export class App extends Component {
       return (
         <div>
           <Searchbar onSubmit={this.handleSubmitInput} />
-          {query.length > 0 && <ImageGallery query={query} />}
+          {hasMoreImages && <ImageGallery query={query} />}
           <Loader className={css.LoaderContainer} />
         </div>
       );
@@ -141,7 +144,10 @@ export class App extends Component {
               onClickImg={this.handleClickImg}
               query={this.state.query}
             />
-            <Button handleClickBtn={this.handleClickBtn} />
+            <Button
+              handleClickBtn={this.handleClickBtn}
+              hidden={!hasMoreImages || hideButton}
+            />
           </div>
         </>
       );
