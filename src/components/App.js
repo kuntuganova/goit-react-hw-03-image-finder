@@ -23,38 +23,31 @@ export class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    const prevQuery = prevState.name;
-    const nextQuery = this.state.name;
+    const { name, page } = this.state;
 
-    const prevPage = prevState.page;
-    const nextPage = this.state.page;
-
-    if (nextPage > 1) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-    if (prevQuery !== nextQuery) {
+    if (prevState.name !== name) {
       this.setState({ query: [], status: 'pending' });
     }
-    if (prevQuery !== nextQuery || prevPage !== nextPage) {
-      API(nextQuery, nextPage)
+
+    if (prevState.name !== name || prevState.page !== page) {
+      API(name, page)
         .then(({ hits }) => {
           const images = hits.map(
-            ({ id, webformatURL, largeImageURL, tags }) => {
-              return { id, webformatURL, largeImageURL, tags };
-            }
+            ({ id, webformatURL, largeImageURL, tags }) => ({
+              id,
+              webformatURL,
+              largeImageURL,
+              tags,
+            })
           );
+
           if (images.length > 0) {
-            this.setState(prevState => {
-              return {
-                query: [...prevState.query, ...images],
-                status: 'resolved',
-              };
-            });
+            this.setState(prevState => ({
+              query: [...prevState.query, ...images],
+              status: 'resolved',
+            }));
           } else {
-            toast.error(`Didn't find anything for the query: ${nextQuery}`);
+            toast.error(`Didn't find anything for the query: ${name}`);
             this.setState({ status: 'idle', hideButton: true });
           }
         })
@@ -96,42 +89,40 @@ export class App extends Component {
       this.state;
     const hasMoreImages = query.length > 0;
 
+    let content = null;
+
     if (status === 'idle') {
-      return (
-        <div>
-          <Searchbar onSubmit={this.handleSubmitInput} />
-          <ToastContainer
-            position="top-center"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </div>
+      content = (
+        <>
+          <div>
+            <ToastContainer
+              position="top-center"
+              autoClose={2000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </div>
+        </>
       );
-    }
-
-    if (status === 'pending') {
-      return (
-        <div>
-          <Searchbar onSubmit={this.handleSubmitInput} />
-          {hasMoreImages && <ImageGallery query={query} />}
-          <Loader className={css.LoaderContainer} />
-        </div>
+    } else if (status === 'pending') {
+      content = (
+        <>
+          <div>
+            {hasMoreImages && <ImageGallery query={query} />}
+            <Loader className={css.LoaderContainer} />
+          </div>
+        </>
       );
-    }
-
-    if (status === 'rejected') {
-      return <h1>{error.message}</h1>;
-    }
-
-    if (status === 'resolved') {
-      return (
+    } else if (status === 'rejected') {
+      content = <h1>{error.message}</h1>;
+    } else if (status === 'resolved') {
+      content = (
         <>
           {showModal && (
             <Modal onClose={this.toggleModal}>
@@ -139,7 +130,6 @@ export class App extends Component {
             </Modal>
           )}
           <div>
-            <Searchbar onSubmit={this.handleSubmitInput} />
             <ImageGallery
               onClickImg={this.handleClickImg}
               query={this.state.query}
@@ -152,5 +142,12 @@ export class App extends Component {
         </>
       );
     }
+
+    return (
+      <div className="App">
+        <Searchbar onSubmit={this.handleSubmitInput} />
+        {content}
+      </div>
+    );
   }
 }
